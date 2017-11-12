@@ -1,3 +1,9 @@
+// This is a fork of linalg v2.0, with the following modifications:
+//	- Added operator* members for matrix-matrix and matrix-vector multiplication.
+//	- Added row-major NxN scalar matrix ctors.
+//	- Added float3x3(const float4x4&) ctor (extract rotation/scale matrix).
+// The fork is maintained here: https://github.com/john-chapman/linalg.
+
 // linalg.h - v2.0 - Single-header public domain linear algebra library
 //
 // The intent of this library is to provide the bulk of the functionality
@@ -123,6 +129,18 @@ namespace linalg
         constexpr vec<T,2>          row(int i) const                    { return {x[i], y[i]}; }
         constexpr const V &         operator[] (int j) const            { return (&x)[j]; }
         V &                         operator[] (int j)                  { return (&x)[j]; }
+
+		constexpr mat(
+			T _00,     T _01,     // row-major
+			T _10 = 0, T _11 = 1
+			)
+			: x(_00, _10)
+			, y(_01, _11)
+		{
+		}
+
+		V operator*(const V& _v) const                   { return mul(*this, _v); }
+		mat<T,M,2> operator*(const mat<T,M,2>& _m) const { return mul(*this, _m); }
     };
     template<class T, int M> struct mat<T,M,3>
     {
@@ -137,6 +155,26 @@ namespace linalg
         constexpr vec<T,3>          row(int i) const                    { return {x[i], y[i], z[i]}; }
         constexpr const V &         operator[] (int j) const            { return (&x)[j]; }
         V &                         operator[] (int j)                  { return (&x)[j]; }
+
+		constexpr mat(
+			T _00,     T _01,     T _02,     // row-major
+			T _10,     T _11,     T _12,
+			T _20 = 0, T _21 = 0, T _22 = 1
+			)
+			: x(_00, _10, _20)
+			, y(_01, _11, _21)
+			, z(_02, _12, _22)
+		{
+		}
+
+		// Construct from the upper-left 3x3 of a 4x4 matrix.
+		constexpr explicit mat(const mat<T,4,4> & m)
+			: mat(V(&m.x.x), V(&m.y.x), V(&m.z.x))
+		{
+		}
+
+		V operator*(const V& _v) const                   { return mul(*this, _v); }
+		mat<T,M,3> operator*(const mat<T,M,3>& _m) const { return mul(*this, _m); }
     };
     template<class T, int M> struct mat<T,M,4>
     {
@@ -151,6 +189,22 @@ namespace linalg
         constexpr vec<T,4>          row(int i) const                    { return {x[i], y[i], z[i], w[i]}; }
         constexpr const V &         operator[] (int j) const            { return (&x)[j]; }
         V &                         operator[] (int j)                  { return (&x)[j]; }
+
+		constexpr mat(
+			T _00,     T _01,     T _02,     T _03,     // row-major
+			T _10,     T _11,     T _12,     T _13,
+			T _20,     T _21,     T _22,     T _23,
+			T _30 = 0, T _31 = 0, T _32 = 0, T _33 = 1
+			)
+			: x(_00, _10, _20, _30)
+			, y(_01, _11, _21, _31)
+			, z(_02, _12, _22, _32)
+			, w(_03, _13, _23, _33)
+		{
+		}
+
+		V operator*(const V& _v) const                   { return mul(*this, _v); }
+		mat<T,M,4> operator*(const mat<T,M,4>& _m) const { return mul(*this, _m); }
     };
 
     // Type traits for a binary operation involving linear algebra types, used for SFINAE on templated functions and operator overloads
@@ -319,7 +373,7 @@ namespace linalg
     template<class T, int M> T                    distance (const vec<T,M> & a, const vec<T,M> & b)      { return length(b-a); }
     template<class T, int M> T                    uangle   (const vec<T,M> & a, const vec<T,M> & b)      { T d=dot(a,b); return d > 1 ? 0 : std::acos(d < -1 ? -1 : d); }
     template<class T, int M> T                    angle    (const vec<T,M> & a, const vec<T,M> & b)      { return uangle(normalize(a), normalize(b)); }
-    template<class T, int M> constexpr vec<T,M>   lerp     (const vec<T,M> & a, const vec<T,M> & b, T t) { return a*(1-t) + b*t; }
+	template<class T, int M> constexpr vec<T,M>   lerp     (const vec<T,M> & a, const vec<T,M> & b, T t) { return a*(1-t) + b*t; }
     template<class T, int M> vec<T,M>             nlerp    (const vec<T,M> & a, const vec<T,M> & b, T t) { return normalize(lerp(a,b,t)); }
     template<class T, int M> vec<T,M>             slerp    (const vec<T,M> & a, const vec<T,M> & b, T t) { T th=uangle(a,b); return th == 0 ? a : a*(std::sin(th*(1-t))/std::sin(th)) + b*(std::sin(th*t)/std::sin(th)); }
     template<class T, int M> constexpr mat<T,M,2> outerprod(const vec<T,M> & a, const vec<T,2> & b)      { return {a*b.x, a*b.y}; }

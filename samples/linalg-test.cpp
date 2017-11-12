@@ -736,3 +736,89 @@ TEST_CASE( "templates instantiate correctly", "" )
     MATCH(float4x4, linalg::frustum_matrix(float(), float(), float(), float(), float(), float()) );
     MATCH(float4x4, linalg::perspective_matrix(float(), float(), float(), float()) );
 }
+
+TEST_CASE( "row-major scalar matrix ctors" )
+{
+	float2x2 m2a(
+		float2(0, 2),
+		float2(1, 3)
+		);
+	float2x2 m2b(
+		0, 1,
+		2, 3
+		);
+	REQUIRE(m2a == m2b);
+
+	float3x3 m3a(
+		float3(0, 3, 6),
+		float3(1, 4, 7),
+		float3(2, 5, 8)
+		);
+	float3x3 m3b(
+		0, 1, 2,
+		3, 4, 5,
+		6, 7, 8
+		);
+	REQUIRE(m3a == m3b);
+
+	float4x4 m4a(
+		float4(0, 4, 8,  12),
+		float4(1, 5, 9,  13),
+		float4(2, 6, 10, 14),
+		float4(3, 7, 11, 15)
+		);
+	float4x4 m4b(
+		0,  1,  2,  3,
+		4,  5,  6,  7,
+		8,  9,  10, 11,
+		12, 13, 14, 15
+		);
+	REQUIRE(m4a == m4b);
+}
+
+TEST_CASE("float3x3(const float4x4&) ctor")
+{
+	float4x4 m4(
+		0,  1,  2,  3,
+		4,  5,  6,  7,
+		8,  9,  10, 11,
+		12, 13, 14, 15
+		);
+	float3x3 m3a(
+		0,  1,  2,
+		4,  5,  6,
+		8,  9,  10
+		);
+	float3x3 m3b(m4);
+	REQUIRE(m3a == m3b);
+}
+
+TEST_CASE("matrix-matrix/matrix-vector multiplication via operator*")
+{
+	float2x2 m2(
+		0, 1,
+		2, 3
+		);
+	float2 v2(0, 1);
+	REQUIRE(m2 * m2 == mul(m2, m2));
+	REQUIRE(m2 * v2 == mul(m2, v2));
+
+	float3x3 m3(
+		0, 1, 2,
+		3, 4, 5,
+		6, 7, 8
+		);
+	float3 v3(0, 1, 2);
+	REQUIRE(m3 * m3 == mul(m3, m3));
+	REQUIRE(m3 * v3 == mul(m3, v3));	
+
+	float4x4 m4(
+		0,  1,  2,  3,
+		4,  5,  6,  7,
+		8,  9,  10, 11,
+		12, 13, 14, 15
+		);
+	float4 v4(0, 1, 2, 3);
+	REQUIRE(m4 * m4 == mul(m4, m4));
+	REQUIRE(m4 * v4 == mul(m4, v4));
+}

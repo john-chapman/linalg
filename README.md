@@ -1,3 +1,13 @@
+This is a fork of linalg v2.0, with the following modifications:
+
+- Added operator* members for matrix-matrix and matrix-vector multiplication.
+- Added row-major NxN scalar matrix ctors.
+- Added float3x3(const float4x4&) ctor (extract rotation/scale matrix).
+
+The fork is maintained [here](https://github.com/john-chapman/linalg).
+
+* * *	
+
 # linalg.h
 
 [![Release is 2.0](http://img.shields.io/badge/release-2.0-blue.svg?style=flat)](https://raw.githubusercontent.com/sgorsten/linalg/master/linalg.h)
