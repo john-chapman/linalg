@@ -131,16 +131,16 @@ namespace linalg
         V &                         operator[] (int j)                  { return (&x)[j]; }
 
 		constexpr mat(
-			T _00,     T _01,     // row-major
-			T _10 = 0, T _11 = 1
+			T m00,     T m01,     // row-major
+			T m10 = 0, T m11 = 1
 			)
-			: x(_00, _10)
-			, y(_01, _11)
+			: x(m00, m10)
+			, y(m01, m11)
 		{
 		}
 
-		V operator*(const V& _v) const                   { return mul(*this, _v); }
-		mat<T,M,2> operator*(const mat<T,M,2>& _m) const { return mul(*this, _m); }
+		V operator*(const V & v) const                    { return mul(*this, v); }
+		mat<T,M,2> operator*(const mat<T,M,2> & m) const { return mul(*this, m); }
     };
     template<class T, int M> struct mat<T,M,3>
     {
@@ -157,13 +157,13 @@ namespace linalg
         V &                         operator[] (int j)                  { return (&x)[j]; }
 
 		constexpr mat(
-			T _00,     T _01,     T _02,     // row-major
-			T _10,     T _11,     T _12,
-			T _20 = 0, T _21 = 0, T _22 = 1
+			T m00,     T m01,     T m02,     // row-major
+			T m10,     T m11,     T m12,
+			T m20 = 0, T m21 = 0, T m22 = 1
 			)
-			: x(_00, _10, _20)
-			, y(_01, _11, _21)
-			, z(_02, _12, _22)
+			: x(m00, m10, m20)
+			, y(m01, m11, m21)
+			, z(m02, m12, m22)
 		{
 		}
 
@@ -173,8 +173,8 @@ namespace linalg
 		{
 		}
 
-		V operator*(const V& _v) const                   { return mul(*this, _v); }
-		mat<T,M,3> operator*(const mat<T,M,3>& _m) const { return mul(*this, _m); }
+		V operator*(const V & v) const                   { return mul(*this, v); }
+		mat<T,M,3> operator*(const mat<T,M,3> & m) const { return mul(*this, m); }
     };
     template<class T, int M> struct mat<T,M,4>
     {
@@ -191,20 +191,20 @@ namespace linalg
         V &                         operator[] (int j)                  { return (&x)[j]; }
 
 		constexpr mat(
-			T _00,     T _01,     T _02,     T _03,     // row-major
-			T _10,     T _11,     T _12,     T _13,
-			T _20,     T _21,     T _22,     T _23,
-			T _30 = 0, T _31 = 0, T _32 = 0, T _33 = 1
+			T m00,     T m01,     T m02,     T m03,     // row-major
+			T m10,     T m11,     T m12,     T m13,
+			T m20,     T m21,     T m22,     T m23,
+			T m30 = 0, T m31 = 0, T m32 = 0, T m33 = 1
 			)
-			: x(_00, _10, _20, _30)
-			, y(_01, _11, _21, _31)
-			, z(_02, _12, _22, _32)
-			, w(_03, _13, _23, _33)
+			: x(m00, m10, m20, m30)
+			, y(m01, m11, m21, m31)
+			, z(m02, m12, m22, m32)
+			, w(m03, m13, m23, m33)
 		{
 		}
 
-		V operator*(const V& _v) const                   { return mul(*this, _v); }
-		mat<T,M,4> operator*(const mat<T,M,4>& _m) const { return mul(*this, _m); }
+		V operator*(const V & v) const                   { return mul(*this, v); }
+		mat<T,M,4> operator*(const mat<T,M,4> & m) const { return mul(*this, m); }
     };
 
     // Type traits for a binary operation involving linear algebra types, used for SFINAE on templated functions and operator overloads
