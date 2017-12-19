@@ -2,6 +2,7 @@
 //	- Added operator* members for matrix-matrix and matrix-vector multiplication.
 //	- Added row-major NxN scalar matrix ctors.
 //	- Added float3x3(const float4x4&) ctor (extract rotation/scale matrix).
+//	- Added templated elementwise ctors for vector types.
 // The fork is maintained here: https://github.com/john-chapman/linalg.
 
 // linalg.h - v2.0 - Single-header public domain linear algebra library
@@ -73,6 +74,8 @@ namespace linalg
         T                           x,y;
         constexpr                   vec()                               : x(), y() {}
         constexpr                   vec(T x_, T y_)                     : x(x_), y(y_) {}
+        template<class U>
+        constexpr                   vec(U x_, U y_)                     : vec(static_cast<T>(x_), static_cast<T>(y_)) {}
         constexpr explicit          vec(T s)                            : vec(s, s) {}
         constexpr explicit          vec(const T * p)                    : vec(p[0], p[1]) {}
         template<class U>
@@ -85,6 +88,8 @@ namespace linalg
         T                           x,y,z;
         constexpr                   vec()                               : x(), y(), z() {}
         constexpr                   vec(T x_, T y_, T z_)               : x(x_), y(y_), z(z_) {}
+        template <class U>
+        constexpr                   vec(U x_, U y_, U z_)               : vec(static_cast<T>(x_), static_cast<T>(y_), static_cast<T>(z_)) {}
         constexpr                   vec(const vec<T,2> & xy, T z_)      : vec(xy.x, xy.y, z_) {}
         constexpr explicit          vec(T s)                            : vec(s, s, s) {}
         constexpr explicit          vec(const T * p)                    : vec(p[0], p[1], p[2]) {}
@@ -100,6 +105,8 @@ namespace linalg
         T                           x,y,z,w;
         constexpr                   vec()                               : x(), y(), z(), w() {}
         constexpr                   vec(T x_, T y_, T z_, T w_)         : x(x_), y(y_), z(z_), w(w_) {}
+        template <class U>
+        constexpr                   vec(U x_, U y_, U z_, U w_)         : vec(static_cast<T>(x_), static_cast<T>(y_), static_cast<T>(z_), static_cast<T>(w_)) {}
         constexpr                   vec(const vec<T,2> & xy, T z_, T w_): vec(xy.x, xy.y, z_, w_) {}
         constexpr                   vec(const vec<T,3> & xyz, T w_)     : vec(xyz.x, xyz.y, xyz.z, w_) {}
         constexpr explicit          vec(T s)                            : vec(s, s, s, s) {}
@@ -131,16 +138,16 @@ namespace linalg
         V &                         operator[] (int j)                  { return (&x)[j]; }
 
 		constexpr mat(
-			T _00,     T _01,     // row-major
-			T _10 = 0, T _11 = 1
+			T m00,     T m01,     // row-major
+			T m10 = 0, T m11 = 1
 			)
-			: x(_00, _10)
-			, y(_01, _11)
+			: x(m00, m10)
+			, y(m01, m11)
 		{
 		}
 
-		V operator*(const V& _v) const                   { return mul(*this, _v); }
-		mat<T,M,2> operator*(const mat<T,M,2>& _m) const { return mul(*this, _m); }
+		V operator*(const V & v) const                    { return mul(*this, v); }
+		mat<T,M,2> operator*(const mat<T,M,2> & m) const { return mul(*this, m); }
     };
     template<class T, int M> struct mat<T,M,3>
     {
@@ -157,13 +164,13 @@ namespace linalg
         V &                         operator[] (int j)                  { return (&x)[j]; }
 
 		constexpr mat(
-			T _00,     T _01,     T _02,     // row-major
-			T _10,     T _11,     T _12,
-			T _20 = 0, T _21 = 0, T _22 = 1
+			T m00,     T m01,     T m02,     // row-major
+			T m10,     T m11,     T m12,
+			T m20 = 0, T m21 = 0, T m22 = 1
 			)
-			: x(_00, _10, _20)
-			, y(_01, _11, _21)
-			, z(_02, _12, _22)
+			: x(m00, m10, m20)
+			, y(m01, m11, m21)
+			, z(m02, m12, m22)
 		{
 		}
 
@@ -173,8 +180,8 @@ namespace linalg
 		{
 		}
 
-		V operator*(const V& _v) const                   { return mul(*this, _v); }
-		mat<T,M,3> operator*(const mat<T,M,3>& _m) const { return mul(*this, _m); }
+		V operator*(const V & v) const                   { return mul(*this, v); }
+		mat<T,M,3> operator*(const mat<T,M,3> & m) const { return mul(*this, m); }
     };
     template<class T, int M> struct mat<T,M,4>
     {
@@ -191,20 +198,20 @@ namespace linalg
         V &                         operator[] (int j)                  { return (&x)[j]; }
 
 		constexpr mat(
-			T _00,     T _01,     T _02,     T _03,     // row-major
-			T _10,     T _11,     T _12,     T _13,
-			T _20,     T _21,     T _22,     T _23,
-			T _30 = 0, T _31 = 0, T _32 = 0, T _33 = 1
+			T m00,     T m01,     T m02,     T m03,     // row-major
+			T m10,     T m11,     T m12,     T m13,
+			T m20,     T m21,     T m22,     T m23,
+			T m30 = 0, T m31 = 0, T m32 = 0, T m33 = 1
 			)
-			: x(_00, _10, _20, _30)
-			, y(_01, _11, _21, _31)
-			, z(_02, _12, _22, _32)
-			, w(_03, _13, _23, _33)
+			: x(m00, m10, m20, m30)
+			, y(m01, m11, m21, m31)
+			, z(m02, m12, m22, m32)
+			, w(m03, m13, m23, m33)
 		{
 		}
 
-		V operator*(const V& _v) const                   { return mul(*this, _v); }
-		mat<T,M,4> operator*(const mat<T,M,4>& _m) const { return mul(*this, _m); }
+		V operator*(const V & v) const                   { return mul(*this, v); }
+		mat<T,M,4> operator*(const mat<T,M,4> & m) const { return mul(*this, m); }
     };
 
     // Type traits for a binary operation involving linear algebra types, used for SFINAE on templated functions and operator overloads
@@ -373,9 +380,9 @@ namespace linalg
     template<class T, int M> T                    distance (const vec<T,M> & a, const vec<T,M> & b)      { return length(b-a); }
     template<class T, int M> T                    uangle   (const vec<T,M> & a, const vec<T,M> & b)      { T d=dot(a,b); return d > 1 ? 0 : std::acos(d < -1 ? -1 : d); }
     template<class T, int M> T                    angle    (const vec<T,M> & a, const vec<T,M> & b)      { return uangle(normalize(a), normalize(b)); }
-	template<class T, int M> constexpr vec<T,M>   lerp     (const vec<T,M> & a, const vec<T,M> & b, T t) { return a*(1-t) + b*t; }
-    template<class T, int M> vec<T,M>             nlerp    (const vec<T,M> & a, const vec<T,M> & b, T t) { return normalize(lerp(a,b,t)); }
-    template<class T, int M> vec<T,M>             slerp    (const vec<T,M> & a, const vec<T,M> & b, T t) { T th=uangle(a,b); return th == 0 ? a : a*(std::sin(th*(1-t))/std::sin(th)) + b*(std::sin(th*t)/std::sin(th)); }
+	//template<class T, int M> constexpr vec<T,M>   lerp     (const vec<T,M> & a, const vec<T,M> & b, T t) { return a*(1-t) + b*t; }
+    //template<class T, int M> vec<T,M>             nlerp    (const vec<T,M> & a, const vec<T,M> & b, T t) { return normalize(lerp(a,b,t)); }
+    //template<class T, int M> vec<T,M>             slerp    (const vec<T,M> & a, const vec<T,M> & b, T t) { T th=uangle(a,b); return th == 0 ? a : a*(std::sin(th*(1-t))/std::sin(th)) + b*(std::sin(th*t)/std::sin(th)); }
     template<class T, int M> constexpr mat<T,M,2> outerprod(const vec<T,M> & a, const vec<T,2> & b)      { return {a*b.x, a*b.y}; }
     template<class T, int M> constexpr mat<T,M,3> outerprod(const vec<T,M> & a, const vec<T,3> & b)      { return {a*b.x, a*b.y, a*b.z}; }
     template<class T, int M> constexpr mat<T,M,4> outerprod(const vec<T,M> & a, const vec<T,4> & b)      { return {a*b.x, a*b.y, a*b.z, a*b.w}; }
