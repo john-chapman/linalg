@@ -4,6 +4,7 @@ This is a fork of linalg v2.0, with the following modifications:
 - Added row-major NxN scalar matrix ctors.
 - Added float3x3(const float4x4&) ctor (extract rotation/scale matrix).
 - Added templated elementwise ctors for vector types.
+- Added more swizzle member functions for vectors.
 
 The fork is maintained [here](https://github.com/john-chapman/linalg).
 
